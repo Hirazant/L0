@@ -1,6 +1,7 @@
 package main
 
 import (
+	"awesomeProject1/cmd/nats"
 	"awesomeProject1/pkg/repository"
 	"log"
 	"net/http"
@@ -8,10 +9,11 @@ import (
 
 func main() {
 
-	//nats.Connect()
+	go nats.Stan()
 	orderRepo := repository.New()
 	orderRepo.FromDb()
 	reg := Reg{orderRepo}
+	nats.TakeMessage("test", "test", "test-1")
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", reg.HomeReg)
