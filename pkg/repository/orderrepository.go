@@ -7,17 +7,23 @@ import (
 	_ "github.com/lib/pq"
 )
 
-type OrderRepository struct {
+type Repository interface {
+	FromDb()
+	FindById(order_id string) (model.Order, error)
+	Create(order *model.Order) (*model.Order, error)
+}
+
+type orderRepository struct {
 	All map[string]model.Order
 }
 
-func New() *OrderRepository {
-	return &OrderRepository{
+func New() *orderRepository {
+	return &orderRepository{
 		All: make(map[string]model.Order),
 	}
 }
 
-func (r *OrderRepository) FromDb() {
+func (r *orderRepository) FromDb() {
 	connStr := "user=hirazant password=1112 dbname=hirazant sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	rowsOrders, err := db.Query("select  * from orders")
@@ -66,12 +72,12 @@ func (r *OrderRepository) FromDb() {
 	}
 }
 
-func (r *OrderRepository) FindById(order_id string) (model.Order, error) {
+func (r *orderRepository) FindById(order_id string) (model.Order, error) {
 	order := r.All[order_id]
 	return order, nil
 }
 
-func (r *OrderRepository) Create(order *model.Order) (*model.Order, error) {
+func (r *orderRepository) Create(order *model.Order) (*model.Order, error) {
 
 	connStr := "user=hirazant password=1112 dbname=hirazant sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
