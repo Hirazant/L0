@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <table>
+        <tbody>
+            <tr>
+                <td>Order id</td>
+                <td>{{ .OrderUid}}
+            </tr>
+            <tr>
+                <td>Track Number</td>
+                <td>{{ .TrackNumber}}
+            </tr>
+            <tr><td>Payments</td></tr>
+            <tr>
+                <td>Transaction</td>
+                <td>{{ .Payment.Transaction }}</td>
+                <td>RequestId</td>
+                <td>{{ .Payment.RequestId }}</td>
+                <td>Amount</td>
+                <td>{{ .Payment.Amount }}</td>
+            </tr>
+            <tr><td>Item</td></tr>
+            {{range .Items}}
+            <tr>
+
+                <td>ChrtId</td>
+                <td>{{ .ChrtId }}</td>
+
+                <td>TrackNumber</td>
+                <td>{{ .TrackNumber }}</td>
+
+                <td>Price</td>
+                <td>{{ .Price }}</td>
+            </tr>
+            {{end}}
+        </tbody>
+    </table>
+
+</body>
+</html>

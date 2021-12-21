@@ -2,8 +2,7 @@ package main
 
 import (
 	"awesomeProject1/pkg/repository"
-	"encoding/json"
-	"fmt"
+	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -13,7 +12,8 @@ type Reg struct {
 }
 
 func (reg *Reg) HomeReg(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Привет из Snippetbox"))
+	tmpl, _ := template.ParseFiles("ui/static/index.html")
+	tmpl.Execute(w, "")
 }
 
 func (reg *Reg) OrderReg(w http.ResponseWriter, r *http.Request) {
@@ -24,6 +24,6 @@ func (reg *Reg) OrderReg(w http.ResponseWriter, r *http.Request) {
 	}
 
 	order, _ := reg.order.FindById("OTSTan")
-	orderjson, _ := json.Marshal(order)
-	fmt.Fprintf(w, "%v", string(orderjson))
+	tmpl, _ := template.ParseFiles("ui/static/order.html")
+	tmpl.Execute(w, order)
 }
