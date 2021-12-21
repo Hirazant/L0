@@ -1,4 +1,4 @@
-package nats
+package main
 
 import (
 	"awesomeProject1/pkg/model"
@@ -13,7 +13,6 @@ var Sc stan.Conn
 func Stan() {
 	quit := make(chan struct{})
 	ConnectStan("nice-nice")
-	//PrintMessage("test", "test", "test-1")
 	<-quit
 }
 
@@ -35,7 +34,7 @@ func ConnectStan(clientID string) {
 	Sc = sc
 }
 
-func TakeMessage(subject, qgroup, durable string) {
+func TakeMessage(subject, qgroup, durable string, reg *Reg) {
 	mcb := func(msg *stan.Msg) {
 		if err := msg.Ack(); err != nil {
 			log.Printf("Ошибка публикации сообщения:%v", err)
@@ -47,7 +46,7 @@ func TakeMessage(subject, qgroup, durable string) {
 			panic(err)
 		}
 		fmt.Println("all good -  ", order)
-		//	fmt.Println(string(msg.Data))
+		reg.order.Create(&order)
 	}
 
 	_, err := Sc.QueueSubscribe(subject,

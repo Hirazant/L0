@@ -78,15 +78,11 @@ func (r *orderRepository) FindById(order_id string) (model.Order, error) {
 }
 
 func (r *orderRepository) Create(order *model.Order) (*model.Order, error) {
-
 	connStr := "user=hirazant password=1112 dbname=hirazant sslmode=disable"
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)
 	}
-
-	r.All[order.OrderUid] = *order
-
 	for _, item := range order.Items {
 		db.QueryRow("insert into items(chrt_id, truck_number, price, fk_items_order) values ($1,$2,$3,$4)",
 			item.ChrtId, item.TrackNumber, item.Price, order.OrderUid)
@@ -95,5 +91,6 @@ func (r *orderRepository) Create(order *model.Order) (*model.Order, error) {
 		order.Payment.Transaction, order.Payment.RequestId, order.Payment.Amount, order.OrderUid)
 	db.QueryRow("insert into orders(order_uid,track_number) values ($1,$2)",
 		order.OrderUid, order.TrackNumber)
+	r.All[order.OrderUid] = *order
 	return order, nil
 }

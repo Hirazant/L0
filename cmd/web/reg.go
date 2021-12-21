@@ -23,7 +23,7 @@ func (reg *Reg) OrderReg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	order, _ := reg.order.FindById("FDSFSDFS")
+	order, _ := reg.order.FindById("OTSTan")
 	orderjson, _ := json.Marshal(order)
 	fmt.Fprintf(w, "%v", string(orderjson))
 }
