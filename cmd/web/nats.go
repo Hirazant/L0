@@ -3,7 +3,6 @@ package main
 import (
 	"awesomeProject1/pkg/model"
 	"encoding/json"
-	"fmt"
 	"github.com/nats-io/stan.go"
 	"log"
 )
@@ -26,10 +25,10 @@ func ConnectStan(clientID string) {
 			log.Fatalf("Connection lost, reason: %v", reason)
 		}))
 	if err != nil {
-		log.Fatalf("Не могу подключится: %v.\nПроверьте запущен ли сервер NATS на: %s", err, url)
+		log.Fatalf("Can't connect: %v", err)
 	}
 
-	log.Println("Подключился")
+	log.Println("Connect")
 
 	Sc = sc
 }
@@ -42,11 +41,13 @@ func TakeMessage(subject, qgroup, durable string, reg *Reg) {
 		var order model.Order
 		err := json.Unmarshal(msg.Data, &order)
 		if err != nil {
-			fmt.Println("not good ", order)
-			panic(err)
+			log.Fatalf("Invalid data, %v", err)
+			return
 		}
-		fmt.Println("all good -  ", order)
-		reg.order.Create(&order)
+		_, err = reg.order.Create(&order)
+		if err != nil {
+			log.Fatalf("Error with data, %v", err)
+		}
 	}
 
 	_, err := Sc.QueueSubscribe(subject,

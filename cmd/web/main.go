@@ -14,7 +14,6 @@ func main() {
 	reg := Reg{orderRepo}
 	TakeMessage("test", "test", "test-1", &reg)
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", reg.HomeReg)
 	mux.HandleFunc("/Order", reg.OrderReg)
 
 	log.Println("Запуск веб-сервера на http://127.0.0.1:4000")

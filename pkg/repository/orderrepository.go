@@ -34,7 +34,8 @@ func (r *orderRepository) FromDb() {
 
 	for rowsOrders.Next() {
 		order := model.Order{}
-		rowsOrders.Scan(&order.OrderUid, &order.TrackNumber, &order.Entry, &order.Locale, &order.InternalSignature, &order.CustomerId, &order.DeliveryService, &order.Shardkey, &order.SmId, &order.DateCreated, &order.OofShard)
+		rowsOrders.Scan(&order.OrderUid, &order.TrackNumber, &order.Entry, &order.Locale, &order.InternalSignature,
+			&order.CustomerId, &order.DeliveryService, &order.Shardkey, &order.SmId, &order.DateCreated, &order.OofShard)
 
 		rowsPayment, err := db.Query("select transaction, request_id, currency, provider, amount, payment_dt, bank, delivery_cost, goods_total, custom_fee from payments where fk_payments_order=$1", &order.OrderUid)
 		if err != nil {
@@ -43,7 +44,8 @@ func (r *orderRepository) FromDb() {
 		defer rowsPayment.Close()
 		payment := model.Payment{}
 		for rowsPayment.Next() {
-			err = rowsPayment.Scan(&payment.Transaction, &payment.RequestId, &payment.Currency, &payment.Provider, &payment.Amount, &payment.PaymentDt, &payment.Bank, &payment.DeliveryCost, &payment.GoodsTotal, &payment.CustomFee)
+			err = rowsPayment.Scan(&payment.Transaction, &payment.RequestId, &payment.Currency, &payment.Provider,
+				&payment.Amount, &payment.PaymentDt, &payment.Bank, &payment.DeliveryCost, &payment.GoodsTotal, &payment.CustomFee)
 			if err != nil {
 				panic(err)
 			}
@@ -56,7 +58,8 @@ func (r *orderRepository) FromDb() {
 		defer rowsDelivery.Close()
 		delivery := model.Delivery{}
 		for rowsDelivery.Next() {
-			err = rowsDelivery.Scan(&delivery.Name, &delivery.Phone, &delivery.Zip, &delivery.City, &delivery.Addres, &delivery.Region, &delivery.Email)
+			err = rowsDelivery.Scan(&delivery.Name, &delivery.Phone, &delivery.Zip, &delivery.City, &delivery.Address,
+				&delivery.Region, &delivery.Email)
 			if err != nil {
 				panic(err)
 			}
@@ -71,7 +74,8 @@ func (r *orderRepository) FromDb() {
 		var items []model.Item
 		for rowsItems.Next() {
 			item := model.Item{}
-			err := rowsItems.Scan(&item.ChrtId, &item.TrackNumber, &item.Price, &item.Rid, &item.Name, &item.Sale, &item.Size, &item.TotalPrice, &item.NmId, &item.Brand, &item.Status)
+			err := rowsItems.Scan(&item.ChrtId, &item.TrackNumber, &item.Price, &item.Rid, &item.Name, &item.Sale,
+				&item.Size, &item.TotalPrice, &item.NmId, &item.Brand, &item.Status)
 			if err != nil {
 				fmt.Println(err)
 				continue
@@ -108,7 +112,7 @@ func (r *orderRepository) Create(order *model.Order) (*model.Order, error) {
 		order.Payment.CustomFee, order.OrderUid)
 	fmt.Println("b")
 	db.QueryRow(`insert into delivery (name, phone, zip, city, address, region, email, fk_delivery_order) values ($1,$2,$3,$4,$5,$6,$7,$8)`,
-		order.Delivery.Name, order.Delivery.Phone, order.Delivery.Zip, order.Delivery.City, order.Delivery.Addres,
+		order.Delivery.Name, order.Delivery.Phone, order.Delivery.Zip, order.Delivery.City, order.Delivery.Address,
 		order.Delivery.Region, order.Delivery.Email, order.OrderUid)
 	fmt.Println("c")
 	for _, item := range order.Items {
