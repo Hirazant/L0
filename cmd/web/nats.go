@@ -41,7 +41,7 @@ func TakeMessage(subject, qgroup, durable string, reg *Reg) {
 		var order model.Order
 		err := json.Unmarshal(msg.Data, &order)
 		if err != nil {
-			log.Fatalf("Invalid data, %v", err)
+			log.Printf("Invalid data %v", err)
 			return
 		}
 		_, err = reg.order.Create(&order)
@@ -52,9 +52,7 @@ func TakeMessage(subject, qgroup, durable string, reg *Reg) {
 
 	_, err := Sc.QueueSubscribe(subject,
 		qgroup, mcb,
-		stan.DeliverAllAvailable(),
-		stan.SetManualAckMode(),
-		stan.DurableName(durable))
+		stan.SetManualAckMode())
 	if err != nil {
 		log.Println(err)
 	}

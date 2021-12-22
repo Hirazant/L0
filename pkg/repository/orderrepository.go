@@ -105,23 +105,18 @@ func (r *orderRepository) Create(order *model.Order) (*model.Order, error) {
 	db.QueryRow(`insert into orders (order_uid, track_number, entry, locale, internal_signature, customer_id, delivery_service, shardkey, sm_id, date_created, oof_shard) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
 		order.OrderUid, order.TrackNumber, order.Entry, order.Locale, order.InternalSignature, order.CustomerId,
 		order.DeliveryService, order.Shardkey, order.SmId, order.DateCreated, order.OofShard)
-	fmt.Println("a")
 	db.QueryRow(`insert into payments (transaction, request_id, currency, provider, amount, payment_dt, bank, delivery_cost, goods_total, custom_fee, fk_payments_order) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
 		order.Payment.Transaction, order.Payment.RequestId, order.Payment.Currency, order.Payment.Provider, order.Payment.Amount,
 		order.Payment.PaymentDt, order.Payment.Bank, order.Payment.DeliveryCost, order.Payment.GoodsTotal,
 		order.Payment.CustomFee, order.OrderUid)
-	fmt.Println("b")
 	db.QueryRow(`insert into delivery (name, phone, zip, city, address, region, email, fk_delivery_order) values ($1,$2,$3,$4,$5,$6,$7,$8)`,
 		order.Delivery.Name, order.Delivery.Phone, order.Delivery.Zip, order.Delivery.City, order.Delivery.Address,
 		order.Delivery.Region, order.Delivery.Email, order.OrderUid)
-	fmt.Println("c")
 	for _, item := range order.Items {
 		db.QueryRow(`insert into items (chrt_id, track_number, price, rid, name, sale, size, total_price, nm_id, brand, status, fk_items_order) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,
 			item.ChrtId, item.TrackNumber, item.Price, item.Rid, item.Name, item.Sale, item.Size, item.TotalPrice, item.NmId,
 			item.Brand, item.Status, order.OrderUid)
 	}
-	fmt.Println("d")
-
 	r.All[order.OrderUid] = *order
 	return order, nil
 }
