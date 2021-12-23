@@ -10,9 +10,7 @@ import (
 var Sc stan.Conn
 
 func Stan() {
-	quit := make(chan struct{})
 	ConnectStan("nice-nice")
-	<-quit
 }
 
 func ConnectStan(clientID string) {
@@ -48,6 +46,7 @@ func TakeMessage(subject, qgroup, durable string, reg *Reg) {
 		if err != nil {
 			log.Fatalf("Error with data, %v", err)
 		}
+		log.Println("added new order - ", order.OrderUid)
 	}
 
 	_, err := Sc.QueueSubscribe(subject,
